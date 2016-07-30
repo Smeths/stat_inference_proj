@@ -1,0 +1,72 @@
+---
+title: 'Statistical Inference: Tooth Growth Analysis'
+author: "Smeths"
+date: "19 August 2015"
+output: pdf_document
+---
+
+## Summary
+
+The aim of this project is to
+
+1) Perform an exploratory analysis of the data set, so as to understand it. 
+2) Clearly state assumptions made about the data and hence produce confidence intervals/hypothesis
+   tests inline with the assumptions made
+3) Form a conclusion based on this analysis
+
+## loading data
+
+```{r "Loading data"}
+# Loading the data and getting some initial information
+data(ToothGrowth)
+summary(ToothGrowth)
+head(ToothGrowth)
+```
+
+## Exploratory Analysis
+
+```{r "Exploratory Analysis"}
+library(ggplot2)
+# Producing plots of len against dose with a factor of supp
+g <- ggplot(ToothGrowth,aes(dose,len))
+g <- g + geom_point(color = "steelblue")
+g <- g + labs(x="dose",
+              y="length")
+g <- g + facet_grid(.~supp)
+g
+```
+
+The plots clearly show that increasing the dose of OJ or VC increases the len (preassumably tooth
+length variable). On the whole it seems that the OJ data is above the VC data, so it would be worth
+testing at the 95% level for the different doses to see if this is true. 
+
+## Confidence Intervals
+
+The following assumptions shell be made about the data
+
+1) The OJ and VC data is not paired
+2) The sample size (10 for each dose/supplement) is small so a t distribution will be used
+3) The variance is not constant
+
+```{r "Confidence Intervals"}
+# performing t test for dose = 0.5
+t.test(len~supp,
+       paired = FALSE,
+       var.equal = FALSE,
+       data = ToothGrowth[ToothGrowth$dose == 0.5,])
+# performing t test for dose = 1.0
+t.test(len~supp,
+       paired = FALSE,
+       var.equal = FALSE,
+       data = ToothGrowth[ToothGrowth$dose == 1.0,])
+# performing t test for dose = 2.0
+t.test(len~supp,
+       paired = FALSE,
+       var.equal = FALSE,
+       data = ToothGrowth[ToothGrowth$dose == 2.0,])
+``` 
+
+## Conclusion
+
+The confidence intervals generated do not contain 0 for doses of 0.5 and 1.0, which means we can conclude there is significant evidence that supplement OJ causes a greater increase in tooth length for these doses. However, for a dose of 2.0 the confidence interval does contain 0 and therefore there is
+not significant evidence to suggest that supplement OJ or VC causes a greater increase in tooth length for this dose.
